@@ -9,11 +9,10 @@ extern "C" {
 }
 
 int main() {
-    // Eigen test
     Eigen::Vector2d v(10, 20);
     std::cout << "Eigen: " << (v * 0.5).transpose() << std::endl;
 
-    // Triangle test
+   
     struct triangulateio in, out;
     std::memset(&in, 0, sizeof(in));
     std::memset(&out, 0, sizeof(out));
