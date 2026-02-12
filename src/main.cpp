@@ -1,36 +1,32 @@
 #include <iostream>
-#include <cstdlib>
+#include <Eigen/Dense>
+#include <cstring>
 
+#define REAL double
+#define VOID void
 extern "C" {
-    #define VOID void
-    #define REAL double
-    #include "triangle.h"
+#include "triangle.h"
 }
 
 int main() {
+    // Eigen test
+    Eigen::Vector2d v(10, 20);
+    std::cout << "Eigen: " << (v * 0.5).transpose() << std::endl;
+
+    // Triangle test
     struct triangulateio in, out;
+    std::memset(&in, 0, sizeof(in));
+    std::memset(&out, 0, sizeof(out));
 
-    in.pointlist = (REAL *) malloc(3 * 2 * sizeof(REAL));
-    in.numberofpoints = 3;
-    
-    in.pointlist[0] = 0; in.pointlist[1] = 0;
-    in.pointlist[2] = 1; in.pointlist[3] = 0;
-    in.pointlist[4] = 0; in.pointlist[5] = 1;
+    REAL c[] = {0,0, 1,0, 1,1, 0,1};
+    in.numberofpoints = 4;
+    in.pointlist = c;
 
-    in.numberofpointattributes = 0;
-    in.pointmarkerlist = nullptr;
-    in.numberofsegments = 0;
-    in.numberofholes = 0;
-    in.numberofregions = 0;
+    triangulate((char*)"pqQ", &in, &out, nullptr);
 
-    out.pointlist = nullptr;
-    out.trianglelist = nullptr;
+    std::cout << "Triangle nodes: " << out.numberofpoints << std::endl;
 
-    triangulate((char*)"zQ", &in, &out, nullptr);
-
-    std::cout << "Triangle OK! Nodes: " << out.numberofpoints 
-              << ", Triangles: " << out.numberoftriangles << std::endl;
-
-    free(in.pointlist);
+    free(out.pointlist);
+    free(out.trianglelist);
     return 0;
 }
